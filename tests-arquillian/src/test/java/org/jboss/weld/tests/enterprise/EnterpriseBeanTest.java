@@ -17,11 +17,6 @@
  */
 package org.jboss.weld.tests.enterprise;
 
-import static org.junit.Assert.assertNotNull;
-
-import javax.ejb.EJBException;
-import javax.inject.Inject;
-
 import org.jboss.arquillian.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
@@ -33,9 +28,15 @@ import org.jboss.weld.test.Utils;
 import org.jboss.weld.tests.category.Broken;
 import org.jboss.weld.tests.category.Integration;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+
+import javax.ejb.EJBException;
+import javax.inject.Inject;
+
+import static org.junit.Assert.assertNotNull;
 
 @Category(Integration.class)
 @RunWith(Arquillian.class)
@@ -106,6 +107,7 @@ public class EnterpriseBeanTest
     */
    @Test
    @Category(Broken.class)
+   @Ignore
    public void testEJBRemoteInterfacesOkForObservers(Scottish scottish)
    {
       Feed feed = new Feed();
@@ -129,9 +131,11 @@ public class EnterpriseBeanTest
    @Category(Broken.class)
    public void testPassivationOfEjbs(HelloAction action)
    {
+      System.err.println("HERE!");
       action.executeRequest();
       Assert.assertEquals("hello", action.getHello());
       Assert.assertEquals("goodbye", action.getGoodBye());
+      System.err.println("HERE!");
    }
    
    /*

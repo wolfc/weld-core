@@ -16,19 +16,25 @@
  */
 package org.jboss.weld.tests.enterprise;
 
+import org.jboss.ejb3.annotation.CacheConfig;
+
 import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.Remove;
 import javax.ejb.Stateful;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.spi.BeanManager;
-
-import org.jboss.ejb3.annotation.CacheConfig;
+import javax.inject.Inject;
 
 @Stateful
 @SessionScoped
 @CacheConfig(idleTimeoutSeconds=1)
 public class HelloBean implements IHelloBean
 {
+   @Inject
+   private AnotherBean bean;
+   
    @Resource(mappedName = "java:comp/BeanManager")
    private BeanManager beanManager;
 
@@ -42,6 +48,21 @@ public class HelloBean implements IHelloBean
       return beanManager.getELResolver() != null ? "goodbye" : "error";
    }
 
+   @PostActivate
+   public void postActivate()
+   {
+      System.err.println("postActivate! " + bean);
+      bean.counter();
+      // counter == 2
+   }
+
+   @PrePassivate
+   public void prePassivate()
+   {
+      bean.counter();
+      System.err.println("prePassivate! " + bean);
+   }
+   
    @Remove
    public void remove()
    {
